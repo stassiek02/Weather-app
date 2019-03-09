@@ -107,7 +107,7 @@ function tempChange(temperature,emoi){
     }
     //get data with location coords and invoke function to set data
    async function getDataLoc(lat,lon){
-       await fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${appKey}`)
+       await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${appKey}`)
         .then(resp => resp.json())
         .then(resp =>{
             setData(resp);
