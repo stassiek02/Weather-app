@@ -20,7 +20,7 @@ function weatherDetails(){
         getData(city);
     }
 }
-
+//get data from API
 function getData(city){
     let data={};
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${appKey}`)
@@ -32,12 +32,13 @@ function getData(city){
         
     
     };
-
+//set data to UI
 function setData(resp){
     clearData();
     const data = resp;
     const basicInfo= data.main;
     const city = data.name;
+    //farenheit to celcius
     const temperature = (basicInfo.temp-273).toFixed(1).toString();
     var emoi ='';
 
@@ -47,22 +48,21 @@ function setData(resp){
     hum.innerHTML = `<span>${basicInfo.humidity}%</span>`;
 
 }
-
+//clear data
 function clearData(){
     temp.innerHTML = '';
     hum.innerHTML = '';
     cityName.innerHTML ='';
 }
-
+//change background color and emoi
 function tempChange(temperature,emoi){
     
-    if(temperature < 0){
+    if(temperature < 5){
         temp.style.backgroundColor='#00a8ff';
         emoi ='🥶';
-        console.log(emoi);
 
-    }else if (temperature>=10 &&temperature<=20){
-        temp.style.backgroundColor='#e1b12c';
+    }else if (temperature>=5 &&temperature<=20){
+        temp.style.backgroundColor='#fbc531';
         emoi ='😎';
     }else if(temperature>20){
         temp.style.backgroundColor='#e84118';
@@ -70,3 +70,55 @@ function tempChange(temperature,emoi){
     }
     return emoi;
 }
+
+
+//get geolocaction 
+
+
+
+
+
+//iffe to set deafult loaction from geolocation
+
+(function () {
+   //geo loc function 
+   geoLoc();
+   //geoloc function 
+    function geoLoc(){
+
+        if(!navigator.geolocation){
+            console.log('Geolocation is not supported by your browser');
+        }else{
+          navigator.geolocation.getCurrentPosition(success,error);
+        }
+        
+      async function success(position){
+        lat  = await position.coords.latitude;
+        lon =  await position.coords.longitude;
+          //  cords.push(lat,lon);
+         getDataLoc(lat,lon);
+        }
+        
+    
+        function error(){
+            console.log('Error happened')
+        }
+    
+    }
+    //get data with location coords and invoke function to set data
+   async function getDataLoc(lat,lon){
+       await fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${appKey}`)
+        .then(resp => resp.json())
+        .then(resp =>{
+            setData(resp);
+        })
+        .catch(err =>console.log('Something went wrong'))
+            
+        
+        };
+
+
+
+})();
+
+
