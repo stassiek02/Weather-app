@@ -5,12 +5,14 @@ const search = document.querySelector('#search-text');
 const cityName = document.querySelector('.city-name');
 const temp = document.querySelector('.temp');
 const hum = document.querySelector('.hum');
-
-search.addEventListener('keyup',enterPressed);
+const air = document.querySelector('.air-pollution');
+const pollution = document.querySelector('.pollution');
+search.addEventListener('keyup', weatherDetails);
 searchBtn.addEventListener('click',weatherDetails);
 
-function enterPressed(){
-    weatherDetails();
+let coord = {
+    lat:0,
+    lon:0
 }
 function weatherDetails(){
     const city = search.value;
@@ -18,6 +20,7 @@ function weatherDetails(){
 
     }else{
         getData(city);
+
     }
 }
 //get data from API
@@ -38,15 +41,23 @@ function setData(resp){
     const data = resp;
     const basicInfo= data.main;
     const city = data.name;
+    coord.lon = data.coord.lon;
+    coord.lat = data.coord.lat;
     //farenheit to celcius
     const temperature = (basicInfo.temp-273).toFixed(1).toString();
-    var emoi ='';
-
+    console.log()
     
     cityName.innerHTML=`<span>${city}</span>`;
     temp.innerHTML= `<span>${temperature}℃<br>${tempChange((basicInfo.temp-273))}</span>`;
     hum.innerHTML = `<span>${basicInfo.humidity}%</span>`;
 
+}
+
+function setDataAir(resp){
+    const data = resp.current.indexes[0];
+    console.log(data)
+    air.innerHTML=`<span>${data.advice}</span>`
+    pollution.style.backgroundColor=`${data.color}`;
 }
 //clear data
 function clearData(){
@@ -74,15 +85,11 @@ function tempChange(temperature,emoi){
 
 //get geolocaction 
 
-
-
-
-
 //iffe to set deafult loaction from geolocation
 
 (function () {
-   //geo loc function 
-   geoLoc();
+    //geo loc function 
+    geoLoc();
    //geoloc function 
     function geoLoc(){
 
@@ -97,9 +104,9 @@ function tempChange(temperature,emoi){
         lon =  await position.coords.longitude;
           //  cords.push(lat,lon);
          getDataLoc(lat,lon);
+         smog(lat,lon);
         }
         
-    
         function error(){
             console.log('Error happened')
         }
@@ -114,11 +121,19 @@ function tempChange(temperature,emoi){
         })
         .catch(err =>console.log('Something went wrong'))
             
-        
         };
-
-
-
 })();
+//get data from airly api 
+async function smog(lat,lon){
+    fetch(`https://airapi.airly.eu/v2/measurements/nearest?lat=${lat}&lng=${lon}&maxDistanceKM=5&maxResults=3`, {
+        headers: {
+          Accept: "application/json",
+          Apikey: "ysL9agaYa6Y9W96IXPgUN15XMXKPN1ia"
+        }
+      })
 
+
+      .then(resp=>resp.json())
+      .then(resp=>setDataAir(resp));
+}
 
