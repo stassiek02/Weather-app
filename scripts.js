@@ -1,4 +1,4 @@
-const appKey = "f24f40b1c24505685fce3b8acd0fcffc";
+const appKey = "e622404040ee01581ad25b2594dd0f31";
 const searchBtn = document.querySelector("#search-btn");
 const search = document.querySelector("#search-text");
 const cityName = document.querySelector(".city-name");
